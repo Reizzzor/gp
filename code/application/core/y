@@ -1,0 +1,236 @@
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '/usr/share/php/PHPMailer/src/Exception.php';
+require '/usr/share/php/PHPMailer/src/PHPMailer.php';
+require '/usr/share/php/PHPMailer/src/SMTP.php';
+
+class LK_Controller extends CI_Controller {
+
+	protected $targets = array('admin' => 'admin', 'kagent' => 'orders', 'salon' => 'orders');
+	protected $howto_items = array(['reglament', 'Регламенты'], ['info', 'Материалы'], ['goods', 'Продукт'], ['sales', 'Проодукты']);
+	protected $model;
+	protected $data = array();
+	protected $orders_table_template = array('table_open' => '<table class="table_resize" id="orders_table">');
+	
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->library('session');
+		$this->load->helper(array('cookie', 'url', 'html', 'form'));
+		$this->data['css_link2'] = link_tag('css/main.css');
+		$this->data['css_link'] = link_tag('css/all.css');
+		$this->data['pdf_dir'] = '/var/www/lk/pdf';
+		$this->data['js_preload'] = $this->load->view('js/js_preload', NULL, TRUE);
+		$this->data['js'] = $this->load->view('js/js_default', NULL, TRUE);
+		$this->data['js_onload'] = $this->load->view('js/js_onload', NULL, TRUE);
+		$this->data['a_logout'] = anchor('logout', '<span class="fa fa-sign-out"></span>Выйти');
+	}
+	
+	private function _has_pdf($order_id)
+	{
+		$pdf_arr = scandir($this->data['pdf_dir']);
+		foreach($pdf_arr as $item){
+			$i2cmpr = (float) substr($item, 0, -4);
+			if(((float) $order_id) === $i2cmpr) return $this->data['pdf_dir'].'/'.$item;
+		}
+		return 0;
+	}
+	
+	protected function check_user_type($usrtype)
+	{
+		if( ! $this->session->has_userdata('user_type')) redirect('logout', 'location');	
+		if($this->session->user_type !== $usrtype) redirect('logout', 'location');
+		if(!get_cookie('scr_y')) set_cookie('scr_y', 900);
+		$this->data['user_type'] = $usrtype;
+		$this->user_target = $this->targets[$usrtype];
+		$model_name = $this->user_target.'_model';
+		$this->load->model($model_name);
+		$this->model = $this->{$model_name};
+		$this->data['o_statuses'] = $this->model->get_order_statuses();
+		if($this->session->has_userdata('shown_msg')){
+			$this->session->unset_userdata('shown_msg');
+			delete_cookie('popup_msg');
+		}
+	}
+	
+	protected function date_format($date_str)
+	{
+		if($date_str[0]!=='2') return '';
+		else return date('d-m-Y', strtotime(substr($date_str, 0, 10)));
+	}
+	
+	protected function load_lk_view()
+	{
+		if(get_cookie('popup_msg')) $this->session->shown_msg = get_cookie('popup_msg');
+		$this->data['searchlink'] = $this->user_target.'/search/';
+		$this->load->view('templates/lk-template', $this->data);	
+	}
+
+	protected function get_yes_or_no($bool_var)	
+	{
+		if($bool_var) return 'Да';
+		return 'Нет';
+	}
+
+	protected function get_order_status($ordstatus_id)
+	{
+		foreach($this->data['o_statuses'] as $o_s){
+			if($o_s['id'] === $ordstatus_id) return $o_s['name'];
+		}
+	}
+	
+	protected function make_orders_table($orders, $t_name = 'Информация о заказах: ')
+	{	
+		$this->load->library('table');
+		$order_info = array('url_info'=>site_url($this->data['orders_url']).'/', 'table_id'=>'orders_table');
+		$this->data['js'] = $this->load->view('js/js_order_info', $order_info, TRUE);
+		$this->table->set_heading("№ в салоне", "Фабр. №", "Номенклатура", "Кол-во", "Статус", "Оплата", "Подиум. образец", "Дата принятия", "Дата готовности", "Дата отгрузки");
+		foreach($orders as $order){
+			$order_status = $this->get_order_status($order['order_status_id']);
+#		'sln_order_id', 'order_id', 'nomenclature', 'charact', 'quantity', 'complect', 'ready_stamp',
+#       'order_status', 'pay', 'is_podium', 'not_standart', 'kept_stamp', 'out_stamp', 'customer',
+#       'phone1', 'phone2', 'address', 'comment', 'sln_name', 'kagent_name', 'kagent_inn'
+			$this->table->add_row($order['sln_order_id'], $order['order_id'], $order['nomenclature'], $order['quantity'], $order_status, 							   									  
+								  $this->get_yes_or_no($order['pay']), $this->get_yes_or_no($order['is_podium']), $this->date_format($order['kept_stamp']), 
+								  $this->date_format($order['ready_stamp']), $this->date_format($order['out_stamp']));
+		}
+		$tb_style = '<tbody style="max-height: '.((int)get_cookie('scr_y') - 143).'">';
+		$this->orders_table_template['tbody_open'] = $tb_style;
+		$this->table->set_template($this->orders_table_template);
+		if(!isset($this->data['links'])) $this->data['links'] = NULL;
+		if($this->data['links']) $t_name .= $this->data['links'];
+		$c_h = heading($t_name, 2);
+		$o_table = $this->table->generate();
+		$this->data['content'] = $c_h . $o_table;		
+		$this->load_lk_view();
+	}
+
+	protected function make_study_menu()
+	{
+			 $this->data['menu_list'][] = anchor('', '<i class="fas fa-book" aria-hidden="true"></i>&nbsp;Обучение', 'onClick="toggleSubMenu(2); return false;"');
+			 $submenu = [];
+			 for($i=0; $i<count($this->howto_items); $i++){
+				$submenu[] = anchor($this->user_target.'/howto/'.$i, $this->howto_items[$i][1]);
+			 }
+			 $sbm_display = $this->submenu_display_mode('show_sbm2');
+			 $ul_params = array('id'=>'submenu2', 'style'=>"display: $sbm_display");
+			 $this->data['menu_list'][] = ul($submenu, $ul_params);
+	}
+	
+	protected function submenu_display_mode($cookie_name)
+	{
+		if(get_cookie($cookie_name) == 1) $display_mode = 'block';
+			 else $display_mode = 'none';
+		return $display_mode;
+	}
+	
+	public function show_docs($a)
+	{
+		if(!array_key_exists($a, $this->howto_items)){
+			$this->show_404();
+			return FALSE;
+		}
+		$s_item = $this->howto_items[$a][0];
+		$docs = $this->model->get_files_list($s_item, 'docs');
+		if(!is_array($docs)){
+			$this->show_404();
+			return FALSE;
+		}
+		$this->load->library('table');
+		$this->data['content'] = $this->load->view('templates/docs_view', array('docs'=>$docs), TRUE);
+		$this->load_lk_view();
+	}
+	
+	public function howto($a)
+	{
+		if(!array_key_exists($a, $this->howto_items)){
+			$this->show_404();
+			return FALSE;
+		}
+		$btn_link = 'onClick="location.href=\'/'.$this->user_target.'/show_';
+		$this->data['content'] = $this->load->view('templates/view_howto', array('ctg_id'=>$a, 'btn_js'=>$btn_link), TRUE);
+		$this->load_lk_view();
+	}
+	
+	public function show_404()
+	{
+		$this->data['content'] = $this->load->view('templates/view404', NULL, TRUE);
+		$this->output->set_status_header('404');
+		$this->load_lk_view();
+	}
+	
+	public function order_info($order_id)
+	{
+		$this->load->library('table');
+		$query_params = array('id_type'=>'order_id', 'id'=>$order_id);
+		$order = $this->model->get_orders($query_params);
+		$order['user_target'] = $this->user_target;
+		$order['out_stamp'] = $this->date_format($order['out_stamp']);
+		$order['order_status'] = $this->get_order_status($order['order_status_id']);
+		$this->table->set_heading("№ в салоне", "Фабр. №", "Номенклатура", "Хар-ка номенклатуры", "Кол-во", "Комплектация", "Дата готовности", "Статус");
+		$this->table->add_row($order['sln_order_id'], $order['order_id'], $order['nomenclature'], $order['charact'], $order['quantity'], $order['complect'], $this->date_format($order['ready_stamp']), $order['order_status']);
+		$order['oi_table'] = $this->table->generate();
+		$this->table->clear();
+		$drapery = $this->model->get_drapery($order_id, 'order_id');
+		if(count($drapery)){
+			$this->table->set_heading('Наименование ткани', 'Наличие', 'Дата прихода', 'Поставщик');
+			foreach($drapery as $dr_item){
+				$this->table->add_row($dr_item['name'], $this->get_yes_or_no($dr_item['is_available']), $this->date_format($dr_item['stamp']), $dr_item['producer']);
+			}
+			$order['d_table'] = $this->table->generate();
+		}
+		else $order['d_table'] = NULL;
+		$order['is_paid'] = $this->get_yes_or_no($order['pay']);
+
+		if($this->_has_pdf($order_id)&&$this->session->has_userdata('email')) $order['bill_disabled'] = FALSE;
+		else $order['bill_disabled'] = TRUE;
+		$oa_keys = array_keys($order);
+		foreach($oa_keys as $i)
+		{
+			if((!$order[$i])&&($i!=='is_podium')&&($i!=='not_standart')&&($i!=='comment')&&($i!=='bill_disabled')) unset($order[$i]);
+		}
+		$this->data['content'] = $this->load->view('templates/oinfo_view', $order, TRUE);
+		$this->load_lk_view();
+	}
+	
+	public function send_bill($order_id)
+	{
+		$email = new PHPMailer();
+		$email->CharSet = "UTF-8";
+		$email->setFrom('no-reply@lk.geniuspark.ru', 'PDF Счёт');
+		$email->Name = 'PDF Bill';
+		$subj = 'Счёт по заказу №'.$order_id;
+		if(substr($subj, -2) === '.0') $email->Subject = substr($subj, 0, -2);
+		else $email->Subject = $subj;
+		$mail_body = "Добрый день!\nСчёт по заказу $order_id";
+		if(substr($subj, -2) === '.0') $email->Body = substr($mail_body, 0, -2).' - во вложении.';
+		else $email->Body = "$mail_body - во вложении.";
+		$email->addAddress($this->session->email);
+		$attach = $this->_has_pdf($order_id);
+		$email->addAttachment($attach);
+		$send_res = $email->Send();
+		if($send_res != '1') set_cookie('popup_msg', '!!'.$send_res);
+		else set_cookie('popup_msg', 'Сообщение успешно отправлено');
+		$this->order_info($order_id);
+	}
+
+	public function search()
+	{
+		$srch = $this->input->post('search');
+		if(!$srch){
+			$this->index();
+			return true;
+		} 
+		$sln_id = NULL;
+		if(isset($this->data['s_info']['id'])) $sln_id = $this->data['s_info']['id'];
+		$res_search = $this->model->search($srch, $sln_id);
+		if(count($res_search)) $this->make_orders_table($res_search);
+		else {
+			$this->data['content'] = heading("No results for $srch", 2);
+			$this->load_lk_view();
+		}
+	}
+	
+}

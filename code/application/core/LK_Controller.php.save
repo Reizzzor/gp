@@ -1,0 +1,25 @@
+<?php
+
+class LK_Controller extends CI_Controller {
+
+	protected $targets = array('admin' => 'admin', 'cagent' => 'orders', 'salon' => 'orders');
+	protected $data = array();
+	
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->library('session');
+		$this->load->helper('url');
+		$this->load->helper('html');
+	}
+	
+	public function check_user_type($usrtype){
+				if( ! $this->session->has_userdata('user_type')) redirect('logout', 'location');	
+				if($this->session->user_type !== $usrtype) redirect('logout', 'location');
+				$this->load->model($this->targets[$usrtype].'_model');
+	}
+	
+	public function index(){
+		$this->load->view($this->targets[$this->session->user_type].'/view');	
+	}
+}

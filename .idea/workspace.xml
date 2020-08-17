@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7e524dfd-1db3-4058-9c22-1f8329c04c0c" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/code/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/code/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/code/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/code/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/code/vendor/composer" />
+      <path value="$PROJECT_DIR$/code/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/code/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/code/vendor/mikey179/vfsstream" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/code/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/code/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/phpunit-mock-objects" />
+      <path value="$PROJECT_DIR$/code/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/code/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/code/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/code/vendor/phpunit/php-token-stream" />
+      <path value="$PROJECT_DIR$/code/vendor/phpmailer/phpmailer" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1g93NkYUre9WcA4VCkfxgBqF6fJ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7e524dfd-1db3-4058-9c22-1f8329c04c0c" name="Default Changelist" comment="" />
+      <created>1597512942452</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1597512942452</updated>
+      <workItem from="1597512944021" duration="24187000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="655" y="382" key="com.intellij.ide.util.TipDialog" timestamp="1597655833786">
+      <screen x="0" y="40" width="1920" height="1040" />
+    </state>
+    <state x="655" y="382" key="com.intellij.ide.util.TipDialog/0.40.1920.1040@0.40.1920.1040" timestamp="1597655833786" />
+    <state x="857" y="432" width="606" height="526" key="find.popup" timestamp="1597584698261">
+      <screen x="0" y="40" width="1920" height="1040" />
+    </state>
+    <state x="857" y="432" width="606" height="526" key="find.popup/0.40.1920.1040@0.40.1920.1040" timestamp="1597584698261" />
+  </component>
+</project>
