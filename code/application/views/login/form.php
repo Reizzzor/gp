@@ -11,7 +11,7 @@
 				<a href="http://geniuspark.ru/" target="_blank"> <img src="http://geniuspark.ru/images/Logo_gp2_5v9z-r3.jpg" /> </a> </div>
 			<div class='login_form'>
 				<lable><p>Вход в личный кабинет</p></lable>
-				<?=form_open('login/submit','method="post" id="loginForm" onSubmit="var okF=saveChanges(); return okF;"')?>		
+				<?=form_open('login/submit','method="post" id="loginForm" onSubmit="var okF=saveChanges(); return okF;"')?>
 				<input type="text" name="username" id="login" placeholder="Логин" /><br /><br />
 				<input type="password" name="password" id="password" placeholder="Пароль" /><br /><br />
 				<input type="submit" value=" Войти " name="submit" />	

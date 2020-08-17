@@ -1,8 +1,8 @@
 <div id="drp_tm_headers">
 	<h1>Разбивка тканей</h1>
 	<h3>
-		<?=anchor('drp_layout/'.scandir('/var/www/lk/public_html/drp_layout')[3], 'Скачать действующую разбивкку')?>
-		<?=count(scandir('/var/www/lk/public_html/drp_layout/archive')) > 2 ? anchor(site_url($arch_prefix.'/drapery/archive'), 'Архив разбивок') : ''?>
+		<?=anchor('drp_layout/'.scandir('drp_layout')[3], 'Скачать действующую разбивкку')?>
+		<?=count(scandir('drp_layout/archive')) > 2 ? anchor(site_url($arch_prefix.'/drapery/archive'), 'Архив разбивок') : ''?>
 	<h3>
 	<h2>Торговая марка</h2>
 </div>

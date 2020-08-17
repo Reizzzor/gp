@@ -2,9 +2,6 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '/usr/share/php/PHPMailer/src/Exception.php';
-require '/usr/share/php/PHPMailer/src/PHPMailer.php';
-require '/usr/share/php/PHPMailer/src/SMTP.php';
 
 class LK_Controller extends CI_Controller {
 
@@ -20,7 +17,7 @@ class LK_Controller extends CI_Controller {
 		$this->load->helper(array('cookie', 'url', 'html', 'form'));
 		$this->data['css_link2'] = link_tag('css/main.css');
 		$this->data['css_link'] = link_tag('css/all.css');
-		$this->data['pdf_dir'] = '/var/www/lk/pdf';
+		$this->data['pdf_dir'] = '../pdf';
 		$this->data['js'] = $this->load->view('js/js_default', NULL, TRUE);
 		$this->data['js_onload'] = $this->load->view('js/js_onload', NULL, TRUE);
 		$this->data['a_logout'] = anchor('logout', '<span class="fas fa-sign-out-alt"></span>Выйти');
@@ -484,7 +481,7 @@ class LK_Controller extends CI_Controller {
 	
 	public function drp_layout_archive()
 	{
-		$arch_files = scandir('/var/www/lk/public_html/drp_layout/archive');
+		$arch_files = scandir('drp_layout/archive');
 		$arch_list = [];
 		foreach($arch_files as $i){
 			if(preg_match('/drp_wcoll/', $i)) $arch_list[] = array('name'=>$i, 'stamp'=>substr($i, 9, 10));
