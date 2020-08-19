@@ -2,20 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7e524dfd-1db3-4058-9c22-1f8329c04c0c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/application/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/config/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/application/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/config/database.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/application/controllers/Admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/controllers/Admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/application/config/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/config/routes.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/application/controllers/Orders.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/controllers/Orders.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/application/core/LK_Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/core/LK_Controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/application/core/LK_Model.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/core/LK_Model.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/application/models/Orders_model.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/models/Orders_model.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/application/views/login/form.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/views/login/form.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/application/views/orders/drapery_layout.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/views/orders/drapery_layout.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/application/views/orders/mngr_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/views/orders/mngr_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/system/core/CodeIgniter.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/system/core/CodeIgniter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public_html/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/public_html/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/application/views/orders/preorder_edit.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/views/orders/preorder_edit.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/application/views/orders/preorders_list.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/views/orders/preorders_list.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/application/views/templates/order_basic_info.php" beforeDir="false" afterPath="$PROJECT_DIR$/code/application/views/templates/order_basic_info.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public_html/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/public_html/css/main.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +27,8 @@
   <component name="FavoritesManager">
     <favorites_list name="lk">
       <favorite_root url="file://$PROJECT_DIR$/code/application/views/templates/lk-template.php" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+      <favorite_root url="file://$PROJECT_DIR$/code/application/views/orders/preorder_edit.php" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+      <favorite_root url="file://$PROJECT_DIR$/code/application/views/templates/order_basic_info.php" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
     </favorites_list>
   </component>
   <component name="Git.Settings">
@@ -105,7 +103,7 @@
       <option name="presentableId" value="Default" />
       <updated>1597512942452</updated>
       <workItem from="1597512944021" duration="24187000" />
-      <workItem from="1597655834277" duration="5962000" />
+      <workItem from="1597655834277" duration="44864000" />
     </task>
     <servers />
   </component>
@@ -117,9 +115,13 @@
       <screen x="0" y="40" width="1920" height="1040" />
     </state>
     <state x="655" y="382" key="com.intellij.ide.util.TipDialog/0.40.1920.1040@0.40.1920.1040" timestamp="1597655833786" />
-    <state x="857" y="432" width="606" height="526" key="find.popup" timestamp="1597662861330">
+    <state x="741" y="424" width="606" height="526" key="find.popup" timestamp="1597784185857">
       <screen x="0" y="40" width="1920" height="1040" />
     </state>
-    <state x="857" y="432" width="606" height="526" key="find.popup/0.40.1920.1040@0.40.1920.1040" timestamp="1597662861330" />
+    <state x="741" y="424" width="606" height="526" key="find.popup/0.40.1920.1040@0.40.1920.1040" timestamp="1597784185857" />
+    <state x="616" y="213" width="670" height="676" key="search.everywhere.popup" timestamp="1597766686451">
+      <screen x="0" y="40" width="1920" height="1040" />
+    </state>
+    <state x="616" y="213" width="670" height="676" key="search.everywhere.popup/0.40.1920.1040@0.40.1920.1040" timestamp="1597766686451" />
   </component>
 </project>

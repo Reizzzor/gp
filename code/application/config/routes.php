@@ -52,6 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['login'] = 'login/index';
 $route['logout'] = 'login/logout';
 $route['orders/info/(\d+.\d)'] = 'orders/order_info/$1';
+$route['orders/order_info_add_prepay/(\d+.\d)'] = 'orders/order_info_add_prepay/$1';
 $route['orders/sendbill/(\d+.\d)'] = 'orders/send_bill/$1';
 $route['orders/status/(:num)'] = 'orders/index/$1';
 $route['orders'] = 'orders/index';

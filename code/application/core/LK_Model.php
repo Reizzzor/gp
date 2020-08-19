@@ -100,17 +100,17 @@ class LK_Model extends CI_Model {
 	{
 		if($params){
 			if(array_key_exists('id_type', $params)){
-				if(!is_array($params['id'])) $this->db->where($params['id_type'], $params['id']);
-				else $this->db->where_in($params['id_type'], $params['id']);
+				if(!is_array($params['id'])) $this->db->where('o.' . $params['id_type'], $params['id']);
+				else $this->db->where_in('o.' . $params['id_type'], $params['id']);
 			}
 			else{
 				foreach($params as $i){
-					if(!is_array($i['id'])) $this->db->where($i['id_type'], $i['id']);
-					else $this->db->where_in($i['id_type'], $i['id']);
+					if(!is_array($i['id'])) $this->db->where('o.' . $i['id_type'], $i['id']);
+					else $this->db->where_in('o.' . $i['id_type'], $i['id']);
 				}
 			}
 		}
-		$query = $this->db->order_by('order_id', 'DESC')->get('orders');
+		$query = $this->db->select('o.*, po.summ_total ,SUM(p.summa) as debt')->join('prepayment p', 'o.order_id = p.order_id', 'left')->join('pre_orders po', 'po.sln_order_id = o.sln_order_id', 'left')->group_by('o.id, po.summ_total')->order_by('o.order_id', 'DESC')->get('orders o');
 		return $query->num_rows()>1 ? $query->result_array() : $query->row_array();
 	}
 

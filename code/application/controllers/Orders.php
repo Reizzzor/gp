@@ -198,7 +198,24 @@ class Orders extends LK_Controller
 			if ($email) $this->session->email = $email;
 			else $this->session->unset_userdata('email');
 		} else $this->session->emails = $this->model->get_mngr_info($this->session->user_id)['emails'];
+
 		parent::order_info($order);
+	}
+
+	public function order_info_add_prepay($order_id)
+	{
+		$p_arr = $this->input->post();
+		//		Если указана предоплата, добавит данные в таблицу
+		if (!empty($p_arr['pre_summa'])) {
+			$val_arr_prepayment = ['pre_summa', 'type_prepayment'];
+			foreach ($val_arr_prepayment as $i) {
+				if (isset($p_arr[$i])) $submit_data_prepayment[$i] = $p_arr[$i];
+			}
+			$submit_data_prepayment['id_order'] = $order_id;
+			if (count(array_keys($submit_data_prepayment)) >= 2) $this->model->insert_prepayment($submit_data_prepayment);
+		}
+		$this->order_info($order_id);
+		header("Location: /orders/info/$order_id");
 	}
 
 	public function pre_orders()
@@ -208,7 +225,6 @@ class Orders extends LK_Controller
 		foreach ($po_list as $i) {
 			if (!$i['cstmr_surname'] && !$i['cstmr_name1'] && !$i['phone1'] && $i['dlvr_type'] == 'salon' && !$this->model->get_po_consist($i['id']) && !$this->model->get_po_consist($i['id'], TRUE)) $this->delete_pre_orders($i['id'], TRUE);
 		}
-		$po_list = $this->model->get_preorders();
 		$po_rows = [];
 		foreach ($po_list as $i) {
 			if ($i['received']) continue;
@@ -230,10 +246,10 @@ class Orders extends LK_Controller
 				$upld = 'Отправлен';
 				$po_date = $this->date_format(explode(' ', $i['stamp'])[0]);
 			}
-			$po_rows[] = [$i['sln_order_id'], $this->model->get_po_models($i['id']), $cstmr, $phone, $i['seller_id'] ? $this->model->get_seller($i['seller_id']) : '', !$this->data['s_info']['hide_fin_part'] && $i['summ_total'] ? ($this->out_summ($i['summ_total'] / 100)) . ' руб.' : '-', $po_date, $edit, $del, $upld];
+			$po_rows[] = [$i['sln_order_id'], $this->model->get_po_models($i['id']), $cstmr, $phone, $i['seller_id'] ? $this->model->get_seller($i['seller_id']) : '', !$this->data['s_info']['hide_fin_part'] && $i['summ_total'] ? ($this->out_summ($i['summ_total'] / 100)) . ' руб.' : '-', $po_date, !$this->data['s_info']['hide_fin_part'] && $i['debt'] ? ($this->out_summ(($i['summ_total'] - $i['debt']) / 100)) . ' руб.' : '-', $edit, $del, $upld];
 		}
 		$this->data['js'] = $this->load->view('js/js_order_info', array('table_id' => 'preorders_table'), TRUE);
-		$this->data['content'] = $this->load->view('orders/preorders_list', array('po_list' => $this->make_sticky_table('preorders_table', ["№ в салоне", "Состав", "Заказчик", "Телефон", "Продавец", "Стоимость", "Дата", '&nbsp;', '&nbsp;', '&nbsp;'], $po_rows, 200)), TRUE);
+		$this->data['content'] = $this->load->view('orders/preorders_list', array('po_list' => $this->make_sticky_table('preorders_table', ["№ в салоне", "Состав", "Заказчик", "Телефон", "Продавец", "Стоимость", "Дата", 'Задолженность', '&nbsp;', '&nbsp;', '&nbsp;'], $po_rows, 200)), TRUE);
 		$this->load_lk_view();
 	}
 
@@ -244,7 +260,7 @@ class Orders extends LK_Controller
 		$this->ext_js[] = 'phone_mask.js';
 		$dlvr = $this->load->view('templates/dlvr_edit', array('sln_address' => $this->model->get_sln_address()), TRUE);
 		$this->data['content'] = $this->load->view('orders/preorder_edit', array('sln_stuff' => $this->model->get_sln_stuff(), 'hide_fin_part' => $this->data['s_info']['hide_fin_part'], 'dlvr' => $dlvr,
-			'next_soid' => $this->model->get_next_soid()), TRUE);
+			'next_soid' => $this->model->get_next_soid(), 'type_prepayment' => $this->model->get_type_prepayment()), TRUE);
 		$this->load_lk_view();
 	}
 
@@ -295,6 +311,18 @@ class Orders extends LK_Controller
 			$xtra_file = '<span id="curr_xfile_drp' . $vl['id'] . '">' . "$xfile_descr</span>" . form_upload($xf_upld_params);
 			$po_rows[] = array('тк' . ($k + 1), $drp['name'], ($vl['quantity'] / 100) . 'м', $summ, $discount, $this->date_format(explode(' ', $vl['stamp'])[0]), $edit, $del, '', $xtra_file);
 		}
+
+		//Новая таблица в html с предоплатой
+		$pr_data['type_prepayment'] = $this->model->get_type_prepayment();
+		$po_prepayment = $this->model->get_po_prepayment($po_id);
+		foreach ($po_prepayment as $k => $vl) {
+			$summ = !$this->data['s_info']['hide_fin_part'] && $vl['summa'] / 100 ? $this->out_summ($vl['summa'] / 100) . ' руб.' : '-';
+			$po_prepayment_rows[] = array($vl['created_at'], $vl['name'], $summ);
+		}
+		if (!empty($po_prepayment_rows)) {
+			$pr_data['prepaymentTable'] = $this->make_sticky_table('po_prepayment_table', ["Дата", "Способ", "Сумма"], $po_prepayment_rows, null, null);
+		}
+
 		$pr_data['consist_table'] = $this->make_sticky_table('po_consist_table', ["№", "Модель", "Кол-во", "Стоимость", "Скидка", "Дата", '&nbsp;', '&nbsp;', 'Бланк заказа', "Доп. файл"], $po_rows);
 		$pr_data['summ_total'] = $this->out_summ($consist_summ);
 		$this->ext_js[] = 'phone_mask.js';
@@ -364,6 +392,20 @@ class Orders extends LK_Controller
 		foreach ($val_arr as $i) {
 			if (isset($p_arr[$i])) $submit_data[$i] = $p_arr[$i];
 		}
+
+//		Если указана предоплата, добавит данные в таблицу
+		if (!empty($p_arr['pre_summa'])) {
+			$val_arr_prepayment = ['pre_summa', 'type_prepayment'];
+			foreach ($val_arr_prepayment as $i) {
+				if (isset($p_arr[$i])) $submit_data_prepayment[$i] = $p_arr[$i];
+			}
+			$submit_data_prepayment['id'] = $po_id;
+			if (count(array_keys($submit_data_prepayment)) >= 2){
+				$this->model->insert_prepayment($submit_data_prepayment);
+				$relocate = TRUE;
+			}
+		}
+
 		if (count(array_keys($submit_data)) > 3) $this->model->update_preorder($submit_data);
 		if (!$po_id) $po_id = $this->model->get_last_preorder_id($submit_data['kagent_id']);
 		$xtra_path = '/var/preorders_xtra/';
@@ -396,7 +438,7 @@ class Orders extends LK_Controller
 		if ($p_arr['adding_poe'] == 'ad') $this->new_poe_drp($po_id);
 		if (substr($p_arr['adding_poe'], 0, 2) == 'ed') $this->edit_poe_drp(substr($p_arr['adding_poe'], 2));
 		if (substr($p_arr['adding_poe'], 0, 2) == 'dd') $this->del_po_entry(substr($p_arr['adding_poe'], 2), TRUE);
-
+		if (isset($relocate) && $relocate == TRUE) header('Location: /preorders');
 	}
 
 	public function delete_pre_orders($po_id = NULL, $quiet = FALSE)

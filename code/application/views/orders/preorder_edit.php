@@ -30,6 +30,17 @@
 <div id='po_consist'><?=isset($consist_table) ? $consist_table : '' ?></div>
 <div id="preorder_summ"><?php if(!$hide_fin_part) echo isset($consist_table) ? 'Общая сумма заказа: <span id="po_summ_val">'.($summ_total).'</span> руб.' : '';?></div>
 <?=$dlvr?>
+<div class="useredit_title">Предоплата</div>
+<?=$prepaymentTable ?? 'Нет<br><br>'?>
+<div>Сумма и вид предоплаты:</div>
+<?=form_input(array('type'=>'text', 'name'=>'pre_summa', 'id'=>'adding_poe', 'value'=>''))?>
+<select name="type_prepayment" id="">
+	<?foreach ($type_prepayment as $tp){?>
+	<option value="<?=$tp['id']?>"><?=$tp['name']?></option>
+	<?}?>
+</select>
+<br>
+<br>
 <div class="useredit_title">Доставочный лист</div>
 <div id="po_xtra_files">
 <?php 
@@ -49,7 +60,7 @@
 </div>
 <div id="btn_line">
 	<div class="usr_btn">
-		<?=form_button(array('name'=>'apply', 'type'=>'submit', 'content'=>'Сохранить'))?>
+		<?= form_button(array('name' => 'apply', 'type' => 'submit', 'content' => 'Сохранить')) ?>
 	</div>
 	<div class="usr_btn">
 		<?=form_button('undo', 'Отмена', 'onClick="location.href=\'/preorders\';"')?>
