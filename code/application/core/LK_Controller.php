@@ -324,18 +324,39 @@ class LK_Controller extends CI_Controller
 	protected function order_info($ord)
 	{
 		$order = array('basic_info' => $this->basic_order_info($ord), 'bill_disabled' => ($this->session->has_userdata('email') || $this->session->has_userdata('emails')) && $this->has_pdf($ord['order_id']) ? FALSE : TRUE);
+
+
 		//Новая таблица в html с предоплатой
 		$prepaymentData['type_prepayment'] = (new Orders_model())->get_type_prepayment();
-//		var_dump($ord);
 		$po_prepayment = (new Orders_model())->get_po_prepayment($ord['order_id']);
+		$total_debt = $po_prepayment[0]['summ_total'] / 100;
 		foreach ($po_prepayment as $k => $vl) {
-			$summ = !$this->data['s_info']['hide_fin_part'] && $vl['summa'] / 100 ? $this->out_summ($vl['summa'] / 100) . ' руб.' : '-';
-			$po_prepayment_rows[] = array($vl['created_at'], $vl['name'], $summ);
+			if(!$this->data['s_info']['hide_fin_part'] && $vl['summa']  / 100){
+				$summ = $this->out_summ($vl['summa'] / 100) . ' руб.';
+				$total_debt =  str_replace(' ', '', $total_debt);
+				$total_debt =  $this->out_summ($total_debt - $vl['summa'] / 100);
+				$tot_debt = $total_debt. ' руб.';
+
+			} else {
+				$summ = '-';
+			}
+			if (!$this->data['s_info']['hide_fin_part'] && $vl['summ_total'] / 100){
+				$debt =  ($this->out_summ($vl['summ_total'] / 100)) ;
+			} else {
+				$debt = '-';
+			}
+
+			$po_prepayment_rows[] = array($vl['created_at'], $vl['name'], $summ, $tot_debt);
 		}
-		$po_prepayment_rows = $po_prepayment_rows ?? [['', '', '']];
-		$prepaymentData['prepaymentTable'] = $this->make_sticky_table('po_prepayment_table', ["Дата", "Способ", "Сумма"], $po_prepayment_rows, null, null);
-		$this->data['content'] = $this->load->view('templates/oinfo_view', $order, TRUE);
+
+		$po_prepayment_rows = $po_prepayment_rows ?? [['', '', '', '']];
+		$prepaymentData['prepaymentTable'] = $this->make_sticky_table('po_prepayment_table', ["Дата", "Способ", "Сумма", 'Текущая задолженность'], $po_prepayment_rows, null, null);
 		$this->data['content'] = $this->load->view('templates/order_basic_info', $prepaymentData, TRUE);
+
+
+		// Не знал как поместить 2 переменные с данными в data['content'], поэтому код из templates/oinfo_view перенес в templates/order_basic_info
+//		$this->data['content'] = $this->load->view('templates/oinfo_view', $order, TRUE);
+		$this->data['content'] = $this->load->view('templates/order_basic_info', $order, TRUE);
 		$this->load_lk_view();
 	}
 

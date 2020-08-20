@@ -392,10 +392,20 @@ class Orders_model extends LK_Model
 	{
 		return $this->db->where('po_id', $po_id)->order_by('stamp', 'DESC')->get($is_drp ? 'po_drapery' : 'po_consist')->result_array();
 	}
+//$query = $this->db->select('o.*, po.summ_total ,SUM(p.summa) as debt')->join('prepayment p', 'o.order_id = p.order_id', 'left')->join('pre_orders po', 'po.sln_order_id = o.sln_order_id', 'left')->group_by('o.id, po.summ_total')->order_by('o.order_id', 'DESC')->get('orders o');
 
 	public function get_po_prepayment($po_id, $is_drp = FALSE)
 	{
-		return $this->db->select('name, summa, created_at')->where('id_pre_orders', $po_id)->or_where('order_id', $po_id)->order_by('created_at')->join('type_prepayment', 'prepayment.id_type_prepayment = type_prepayment.id')->get('prepayment')->result_array();
+		return $this->db
+			->select('t_p.name, p.summa, p.created_at, po.summ_total')
+			->where('p.id_pre_orders', $po_id)
+			->or_where('p.order_id', $po_id)
+			->order_by('p.created_at')
+			->join('type_prepayment t_p', 'p.id_type_prepayment = t_p.id')
+			->join('orders o', 'o.order_id = p.order_id', 'left')
+			->join('pre_orders po', 'po.sln_order_id = o.sln_order_id', 'left')
+			->get('prepayment p')
+			->result_array();
 	}
 
 	public function get_type_prepayment()

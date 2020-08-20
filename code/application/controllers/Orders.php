@@ -314,10 +314,12 @@ class Orders extends LK_Controller
 
 		//Новая таблица в html с предоплатой
 		$pr_data['type_prepayment'] = $this->model->get_type_prepayment();
+		$pr_data['debt'] = 0;
 		$po_prepayment = $this->model->get_po_prepayment($po_id);
 		foreach ($po_prepayment as $k => $vl) {
 			$summ = !$this->data['s_info']['hide_fin_part'] && $vl['summa'] / 100 ? $this->out_summ($vl['summa'] / 100) . ' руб.' : '-';
 			$po_prepayment_rows[] = array($vl['created_at'], $vl['name'], $summ);
+			$pr_data['debt'] += $vl['summa'] / 100;
 		}
 		if (!empty($po_prepayment_rows)) {
 			$pr_data['prepaymentTable'] = $this->make_sticky_table('po_prepayment_table', ["Дата", "Способ", "Сумма"], $po_prepayment_rows, null, null);
@@ -325,6 +327,9 @@ class Orders extends LK_Controller
 
 		$pr_data['consist_table'] = $this->make_sticky_table('po_consist_table', ["№", "Модель", "Кол-во", "Стоимость", "Скидка", "Дата", '&nbsp;', '&nbsp;', 'Бланк заказа', "Доп. файл"], $po_rows);
 		$pr_data['summ_total'] = $this->out_summ($consist_summ);
+		//
+		$pr_data['debt'] = $this->out_summ($consist_summ - $pr_data['debt']);
+
 		$this->ext_js[] = 'phone_mask.js';
 		$this->data['js'] = $this->load->view('js/js_preorder_edit', array('po_id' => $po_id, 'dlvr_type' => $pr_data['po']['dlvr_type'], 'consist_summ' => $consist_summ), TRUE);
 		$dlvr_list_fname = $user_id . "_$po_id" . '_dlvr_list.pdf';

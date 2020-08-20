@@ -29,18 +29,19 @@
 </div>
 <div id='po_consist'><?=isset($consist_table) ? $consist_table : '' ?></div>
 <div id="preorder_summ"><?php if(!$hide_fin_part) echo isset($consist_table) ? 'Общая сумма заказа: <span id="po_summ_val">'.($summ_total).'</span> руб.' : '';?></div>
-<?=$dlvr?>
-<div class="useredit_title">Предоплата</div>
-<?=$prepaymentTable ?? 'Нет<br><br>'?>
-<div>Сумма и вид предоплаты:</div>
-<?=form_input(array('type'=>'text', 'name'=>'pre_summa', 'id'=>'adding_poe', 'value'=>''))?>
+<div id="preorder_summ"><?php if(!$hide_fin_part) echo isset($debt) ? 'Задолженность: <span id="po_summ_val">'.($debt).'</span> руб.' : '';?></div>
+<!--<div>Сумма и вид оплаты:</div>-->
+<?=form_input(array('type'=>'text', 'name'=>'pre_summa', 'id'=>'adding_poe', 'value'=>'', 'placeholder' => 'Введите сумму оплаты'))?>
 <select name="type_prepayment" id="">
 	<?foreach ($type_prepayment as $tp){?>
-	<option value="<?=$tp['id']?>"><?=$tp['name']?></option>
+		<option value="<?=$tp['id']?>"><?=$tp['name']?></option>
 	<?}?>
 </select>
 <br>
+<?=$prepaymentTable ?? '<br>'?>
 <br>
+
+<?=$dlvr?>
 <div class="useredit_title">Доставочный лист</div>
 <div id="po_xtra_files">
 <?php 
